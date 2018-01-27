@@ -1,12 +1,5 @@
 let eth;
 let token;
-if (typeof web3 !== 'undefined') {
-  web3 = new Web3(web3.currentProvider);
-} else {
-  // set the provider you want from Web3.providers
-  web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
-}
-console.log('Web 3 ', web3, Web3);
 
 function showNotification(head, body) {
     $('#errorModal').modal('open');
@@ -188,8 +181,7 @@ $(() => {
 
     $('#getStarted').click(() => {
         if ( !window.web3 ) {
-            showNotification("MetaMask not found!", "Please validate that you are accessing this page with metamask or another web browser that provides us with a web3 instance!");
-            return;
+            web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
         }
 
         eth = new Eth(web3.currentProvider);
