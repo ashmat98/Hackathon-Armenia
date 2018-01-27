@@ -1,7 +1,7 @@
 // Load Ethereum
 const Eth = require('ethjs');
 const privateToAccount = require('ethjs-account').privateToAccount;
-const provider = 'https://rinkeby.infura.io';
+const provider = 'http://127.0.0.1:7545'; //'https://rinkeby.infura.io';
 const eth = new Eth(new Eth.HttpProvider(provider));
 
 //provider account
@@ -11,12 +11,12 @@ const account = privateToAccount(privateKeyString);
 //create contract wrapper 
 const Futures = require('./FuturesExample.js');
 const futuresABI = Futures.abi;
-const futuresAddress="0x5180FC619220a0be134F98694d25e41B60C06B91";
+const futuresAddress="0xf328c11c4df88d18fcbd30ad38d8b4714f4b33bf";
 const futures = eth.contract(futuresABI).at(futuresAddress);
 
 const exchange = require('./exchange.js');
 
-/*
+/*  
 Handle Oracle Data
 */
 
@@ -42,24 +42,38 @@ Handle Query events from futures contract
 event Query(string queryString, address queryAddress);
 */
 
+console.log('asdasdasd'
+    , futures.contract)
+
+var filter = futures.Query().new((err, res) => {
+    if (err) throw err;
+    
+})
+
+console.log(filter)
+filter.then(console.log)
+
+// filter.watch().then(console.log)
 // Create the Event filter for solidity event
-let filter = futures.contract.Query().new((err, res) => {
-    if ( err ) {
-        throw err;
-    }
-});
+// let filter = futures.contract.Query().new((err, res) => {
+//     if ( err ) {
+//         throw err;
+//     }
 
-// Watch the event filter
-filter.watch().then((result) => {
-    // Sanity check
-    if ( result.length != 2 ) {
-        throw; 
-    }
+// console.log(err, res,'ehjwifjsk')
+// // Watch the event filter
+// quer_event.watch().then((result) => {
+//     // Sanity check
+//     console.log(result)
+//     if ( result.length != 2 ) {
+//         throw Error(); 
+//     }
 
-    // Make sure it is us
-    if ( result[1] != account ) {
-        throw; 
-    }
+//     // Make sure it is us
+//     if ( result[1] != account ) {
+//         throw Error(); 
+//     }
 
-   fetchData(result[0],respondToQuery); 
-});
+//    fetchData(result[0],respondToQuery)})
+//     // });
+// // });
