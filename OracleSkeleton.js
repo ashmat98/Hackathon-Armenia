@@ -9,10 +9,10 @@ const privateKeyString = "c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0
 const account = privateToAccount(privateKeyString); 
 
 //create contract wrapper 
-const Futures = require('./FuturesExample.js');
+const Futures = require('./FuturesExample.js');  // Compiled version of FuturesSol.js
 const futuresABI = Futures.abi;
-const futuresAddress="0xf328c11c4df88d18fcbd30ad38d8b4714f4b33bf";
-const futures = eth.contract(futuresABI).at(futuresAddress);
+const futuresAddress="0x2467636bea0f3c2441227eedbffac59f11d54a80";  // contract address
+const futures = eth.contract(futuresABI, Futures.bytecode).at(futuresAddress);
 
 const exchange = require('./exchange.js');
 
@@ -37,43 +37,9 @@ function fetchData(queryString, callback){
 }
 
 
-/*
-Handle Query events from futures contract
-event Query(string queryString, address queryAddress);
-*/
+let queryEvent = futures.Query();
 
-console.log('asdasdasd'
-    , futures.contract)
-
-var filter = futures.Query().new((err, res) => {
-    if (err) throw err;
-    
+queryEvent.watch((err, res) => {
+    console.log(err, res)
+    fetchData(res[0], respondToQuery)
 })
-
-console.log(filter)
-filter.then(console.log)
-
-// filter.watch().then(console.log)
-// Create the Event filter for solidity event
-// let filter = futures.contract.Query().new((err, res) => {
-//     if ( err ) {
-//         throw err;
-//     }
-
-// console.log(err, res,'ehjwifjsk')
-// // Watch the event filter
-// quer_event.watch().then((result) => {
-//     // Sanity check
-//     console.log(result)
-//     if ( result.length != 2 ) {
-//         throw Error(); 
-//     }
-
-//     // Make sure it is us
-//     if ( result[1] != account ) {
-//         throw Error(); 
-//     }
-
-//    fetchData(result[0],respondToQuery)})
-//     // });
-// // });
