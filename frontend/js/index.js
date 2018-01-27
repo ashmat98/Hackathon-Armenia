@@ -212,7 +212,7 @@ $(() => {
             return;
         }
 
-        const time = new Date(expiresDate + ' ' + expiresTime).getTime() / 1000;
+        const time = new Date(expiresDate.split('-').join(' ') + ' ' + expiresTime).getTime() / 1000;
         const expires = Eth.toBN(time);
 
         buyIn = Eth.toWei(buyIn, 'ether');

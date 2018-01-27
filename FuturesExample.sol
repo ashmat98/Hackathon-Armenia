@@ -47,7 +47,7 @@ contract BinaryFuture{
     //take "long" or "short" position with msg.value == future.buyIn
     function fillPosition(uint256 position) public payable {
         if (msg.value != future.buyIn) throw;
-        if (position == 0){
+        if (position == 0){ 
             if (future.long == address(0)) {
                 throw;
             }
@@ -77,13 +77,29 @@ contract BinaryFuture{
     }
     
     //compare future.startValue with future.endValue, payout to and short proportionally
+    function f(uint256 x, uint256 y) returns(uint256) {
+        // minimum of x and y
+        if (x < y)
+            return x;
+        else
+            return y;
+    }
     function settleContract() public {
         if (future.stage != FuturesStage.ReadySettle)
             throw;
-        if (future.startValue > future.endValue)
+        uint256 quantity_winner;
+        if (future.startValue > future.endValue){
             future.winner = future.short;
-        if (future.startValue < future.endValue)
+            quantity_winner = f(future.startValue - future.endValue, future.endValue) * future.buyIn / future.endValue;
+            future.short.transfer(future.buyIn + quantity_winner);
+            future.long.transfer(future.buyIn - quantity_winner);
+        }
+        else {//(future.startValue <= future.endValue)
             future.winner = future.long;
+            quantity_winner = f(future.endValue - future.startValue, future.startValue) * future.buyIn / future.startValue;
+            future.long.transfer(future.buyIn + quantity_winner);
+            future.short.transfer(future.buyIn - quantity_winner);
+        }
     }
     
     //emit query event
@@ -98,7 +114,7 @@ contract BinaryFuture{
             future.stage = FuturesStage.ContractLive;
         }
         if (future.stage == FuturesStage.ReadyEnd){
-            future.startValue = response;
+            future.endValue = response;
             future.stage = FuturesStage.ReadySettle;
         }
     }
