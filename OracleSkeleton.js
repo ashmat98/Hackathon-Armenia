@@ -5,13 +5,16 @@ const provider = 'https://rinkeby.infura.io';
 const eth = new Eth(new Eth.HttpProvider(provider));
 
 //provider account
-const privateKeyString = "";
+const privateKeyString = "c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3";
 const account = privateToAccount(privateKeyString); 
 
 //create contract wrapper 
-const futuresABI = [{ }];
-const futuresAddress="";
+const Futures = require('./FuturesExample.js');
+const futuresABI = Futures.abi;
+const futuresAddress="0x5180FC619220a0be134F98694d25e41B60C06B91";
 const futures = eth.contract(futuresABI).at(futuresAddress);
+
+const exchange = require('./exchange.js');
 
 /*
 Handle Oracle Data
@@ -27,9 +30,12 @@ let respondToQuery = function(response){
 }
 
 function fetchData(queryString, callback){
-    //fetch data, ex Binance futures
-    //pass to callback
+    exchange(queryString).then(data => {
+        let price = (parseFloat(data['highestBid']) + parseFloat(data['lowestAsk'])) / 2;
+        return callback(price);
+    }).catch(null);
 }
+
 
 /*
 Handle Query events from futures contract
