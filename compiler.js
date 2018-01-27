@@ -1,3 +1,4 @@
+// Compiles .sol files, and saves abi and bytecode in a .js file
 const fs = require('fs');
 const solc = require('solc');
 
